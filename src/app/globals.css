@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+:root {
+  --background: #000000;
+  --foreground: #ffffff;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-golos), ui-sans-serif, system-ui, sans-serif;
+
+  /* Specific Font Sizes provided by user */
+  --text-12: 12px;
+  --text-14: 14px;
+  --text-16: 16px;
+  --text-18: 18px;
+  --text-20: 20px;
+  --text-22: 22px;
+  --text-24: 24px;
+  --text-30: 30px;
+  --text-32: 32px;
+  --text-36: 36px;
+  --text-40: 40px;
+  --text-44: 44px;
+  --text-48: 48px;
+  --text-50: 50px;
+  --text-54: 54px;
+  --text-60: 60px;
+  --text-80: 80px;
+  --text-120: 120px;
+  --text-130: 130px;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}

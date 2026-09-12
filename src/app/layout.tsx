@@ -22,7 +22,7 @@ export default function RootLayout({
       lang="en"
       className={`${golosText.variable} h-full antialiased dark`}
     >
-      <body className="min-h-full flex flex-col font-sans bg-black text-white">{children}</body>
+      <body suppressHydrationWarning className="min-h-full flex flex-col font-sans bg-black text-white">{children}</body>
     </html>
   );
 }

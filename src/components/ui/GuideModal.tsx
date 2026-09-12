@@ -76,16 +76,6 @@ export function GuideModal() {
                 </p>
               </div>
 
-              <div className="space-y-2">
-                <h3 className="text-lg font-bold text-slate-900 flex items-center">
-                  <span className="bg-amber-100 text-amber-600 w-6 h-6 rounded-md flex items-center justify-center mr-2 text-xs">4</span>
-                  DOM Recycling Feed
-                </h3>
-                <p>
-                  Scroll the Data Table on the right as violently as you want. It utilizes ultra-fast <strong>React DOM Recycling</strong> and <kbd className="bg-slate-100 border border-slate-200 rounded px-1 font-mono text-xs text-slate-900">requestAnimationFrame</kbd> throttling. Instead of creating and destroying HTML nodes, it perpetually reuses the same nodes and only swaps the text, keeping the CPU completely idle.
-                </p>
-              </div>
-
             </div>
           </div>
         </div>

@@ -9,27 +9,25 @@ export function PerformanceMonitor() {
   const { dataRef } = useData();
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-8">
+    <div className="flex items-center space-x-6">
       
-      <div className="flex items-center space-x-6">
-        <div className="flex flex-col">
-          <span className="text-[10px] text-slate-400 uppercase tracking-widest font-bold">FPS</span>
-          <span className={`text-2xl font-bold tracking-tight ${fps >= 55 ? 'text-emerald-400' : fps >= 30 ? 'text-amber-400' : 'text-rose-400'}`}>
-            {fps}
-          </span>
-        </div>
-        
-        <div className="w-px h-8 bg-slate-100" />
-        
-        <div className="flex flex-col">
-          <span className="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Memory</span>
-          <span className="text-2xl font-bold tracking-tight text-indigo-400">
-            {memory > 0 ? `${memory}` : '0'}<span className="text-sm text-indigo-300 ml-1">MB</span>
-          </span>
-        </div>
+      <div className="flex flex-col">
+        <span className="text-[10px] text-slate-400 uppercase tracking-widest font-bold">FPS</span>
+        <span className={`text-2xl font-bold tracking-tight ${fps >= 55 ? 'text-emerald-400' : fps >= 30 ? 'text-amber-400' : 'text-rose-400'}`}>
+          {fps}
+        </span>
+      </div>
+      
+      <div className="w-px h-8 bg-slate-100" />
+      
+      <div className="flex flex-col">
+        <span className="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Memory</span>
+        <span className="text-2xl font-bold tracking-tight text-indigo-400">
+          {memory > 0 ? `${memory}` : '0'}<span className="text-sm text-indigo-300 ml-1">MB</span>
+        </span>
       </div>
 
-      <div className="w-px h-8 bg-slate-100 hidden sm:block" />
+      <div className="w-px h-8 bg-slate-100" />
 
       <div className="flex flex-col text-right">
         <span className="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Data Points</span>

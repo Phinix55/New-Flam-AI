@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useTransition, useState } from 'react';
-import { useData } from '../providers/DataProvider';
+import { useData } from '@/components/providers/DataProvider';
 
 export function FilterPanel() {
   const [isPending, startTransition] = useTransition();

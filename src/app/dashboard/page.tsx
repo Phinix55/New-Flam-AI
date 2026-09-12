@@ -1,13 +1,13 @@
 import React from 'react';
 import { DataProvider } from '../../components/providers/DataProvider';
-import { LineChart } from '../../components/charts/LineChart';
-import { BarChart } from '../../components/charts/BarChart';
-import { ScatterPlot } from '../../components/charts/ScatterPlot';
-import { Heatmap } from '../../components/charts/Heatmap';
-import { FilterPanel } from '../../components/controls/FilterPanel';
-import { TimeRangeSelector } from '../../components/controls/TimeRangeSelector';
-import { DataTable } from '../../components/ui/DataTable';
-import { PerformanceMonitor } from '../../components/ui/PerformanceMonitor';
+import { LineChart } from '../../components/dashboard/charts/LineChart';
+import { BarChart } from '../../components/dashboard/charts/BarChart';
+import { ScatterPlot } from '../../components/dashboard/charts/ScatterPlot';
+import { Heatmap } from '../../components/dashboard/charts/Heatmap';
+import { FilterPanel } from '../../components/dashboard/controls/FilterPanel';
+import { TimeRangeSelector } from '../../components/dashboard/controls/TimeRangeSelector';
+import { DataTable } from '../../components/dashboard/table/DataTable';
+import { PerformanceMonitor } from '../../components/dashboard/metrics/PerformanceMonitor';
 import { GuideModal } from '../../components/ui/GuideModal';
 
 export default function DashboardPage() {

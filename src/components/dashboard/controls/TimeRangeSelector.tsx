@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useData } from '../providers/DataProvider';
+import { useData } from '@/components/providers/DataProvider';
 
 const RANGES = ['1min', '5min', '1hour', 'All'];
 

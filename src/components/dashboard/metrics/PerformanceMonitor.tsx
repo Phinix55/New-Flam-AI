@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { usePerformanceMonitor } from '../../hooks/usePerformanceMonitor';
-import { useData } from '../providers/DataProvider';
+import { usePerformanceMonitor } from '@/hooks/usePerformanceMonitor';
+import { useData } from '@/components/providers/DataProvider';
 
 export function PerformanceMonitor() {
   const { fps, memory } = usePerformanceMonitor();

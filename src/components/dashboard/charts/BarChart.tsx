@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useCallback } from 'react';
-import { useChartRenderer } from '../../hooks/useChartRenderer';
-import { DataPoint } from '../../lib/types';
-import { scaleX, scaleY } from '../../lib/canvasUtils';
+import { useChartRenderer } from '@/hooks/useChartRenderer';
+import { DataPoint } from '@/lib/types';
+import { scaleX, scaleY } from '@/lib/canvasUtils';
 
 export function BarChart({ width = 800, height = 400 }) {
   const drawBar = useCallback((

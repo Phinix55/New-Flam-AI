@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useData } from '../providers/DataProvider';
-import { useVirtualization } from '../../hooks/useVirtualization';
-import { DataPoint } from '../../lib/types';
-import { FilterPanel } from '../controls/FilterPanel';
-import { TimeRangeSelector } from '../controls/TimeRangeSelector';
+import { useData } from '@/components/providers/DataProvider';
+import { useVirtualization } from '@/hooks/useVirtualization';
+import { DataPoint } from '@/lib/types';
+import { FilterPanel } from '@/components/dashboard/controls/FilterPanel';
+import { TimeRangeSelector } from '@/components/dashboard/controls/TimeRangeSelector';
 
 export function DataTable() {
   const { dataRef } = useData();

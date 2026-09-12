@@ -3,6 +3,7 @@ export interface DataPoint {
   value: number;
   category: string;
   metadata?: Record<string, any>;
+  formattedTime?: string;
 }
 
 export interface ChartConfig {

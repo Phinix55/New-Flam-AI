@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback } from 'react';
 
 interface VirtualizationOptions {
   itemHeight: number;
@@ -14,9 +14,16 @@ export function useVirtualization(
 ) {
   const [scrollTop, setScrollTop] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number | null>(null);
 
   const onScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
-    setScrollTop(e.currentTarget.scrollTop);
+    const top = e.currentTarget.scrollTop;
+    if (rafRef.current === null) {
+      rafRef.current = requestAnimationFrame(() => {
+        setScrollTop(top);
+        rafRef.current = null;
+      });
+    }
   }, []);
 
   const totalHeight = itemCount * itemHeight;

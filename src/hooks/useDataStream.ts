@@ -18,7 +18,7 @@ export function useDataStream() {
     workerRef.current.onmessage = (e: MessageEvent) => {
       const { type, payload } = e.data;
 
-      if (type === 'DATA_INIT') {
+      if (type === 'DATA_INIT' || type === 'DATA_RESET') {
         dataRef.current = payload;
         notifyListeners();
       }
@@ -64,9 +64,14 @@ export function useDataStream() {
     notifyListeners();
   };
 
+  const setFilter = (text: string) => {
+    workerRef.current?.postMessage({ type: 'SET_FILTER', payload: text });
+  };
+
   return {
     subscribe,
     dataRef,
     resetData,
+    setFilter,
   };
 }

@@ -55,7 +55,7 @@ export const clearCanvas = (
   width: number,
   height: number
 ) => {
-  ctx.fillStyle = '#0f172a'; // Match modern dark theme (slate-900)
+  ctx.fillStyle = '#ffffff'; // Match clean light theme
   ctx.fillRect(0, 0, width, height);
 };
 
@@ -65,21 +65,21 @@ export const drawGrid = (
   width: number,
   height: number
 ) => {
-  ctx.strokeStyle = '#1e293b'; // slate-800
+  ctx.strokeStyle = '#f8fafc'; // slate-50
   ctx.lineWidth = 1;
   ctx.beginPath();
-  
+
   // Horizontal grid lines
   for (let y = 0; y <= height; y += height / 5) {
     ctx.moveTo(0, y);
     ctx.lineTo(width, y);
   }
-  
+
   // Vertical grid lines
   for (let x = 0; x <= width; x += width / 5) {
     ctx.moveTo(x, 0);
     ctx.lineTo(x, height);
   }
-  
+
   ctx.stroke();
 };

@@ -9,29 +9,33 @@ export function PerformanceMonitor() {
   const { dataRef } = useData();
 
   return (
-    <div className="fixed bottom-4 right-4 bg-slate-900 border border-slate-700 p-4 rounded-lg shadow-2xl flex flex-col space-y-2 z-50">
-      <div className="text-xs text-slate-400 uppercase tracking-wider font-semibold">Metrics</div>
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between w-full space-y-4 sm:space-y-0">
       
-      <div className="flex justify-between items-center space-x-6">
-        <span className="text-slate-300 text-sm">FPS</span>
-        <span className={`font-mono font-bold ${fps >= 55 ? 'text-green-500' : fps >= 30 ? 'text-yellow-500' : 'text-red-500'}`}>
-          {fps}
-        </span>
-      </div>
-      
-      <div className="flex justify-between items-center space-x-6">
-        <span className="text-slate-300 text-sm">Memory</span>
-        <span className="font-mono text-blue-400 font-bold">
-          {memory > 0 ? `${memory} MB` : 'N/A'}
-        </span>
+      <div className="flex items-center space-x-6">
+        <div className="flex flex-col">
+          <span className="text-[10px] text-slate-400 uppercase tracking-widest font-bold">FPS</span>
+          <span className={`text-2xl font-bold tracking-tight ${fps >= 55 ? 'text-emerald-400' : fps >= 30 ? 'text-amber-400' : 'text-rose-400'}`}>
+            {fps}
+          </span>
+        </div>
+        
+        <div className="w-px h-8 bg-slate-100" />
+        
+        <div className="flex flex-col">
+          <span className="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Memory</span>
+          <span className="text-2xl font-bold tracking-tight text-indigo-400">
+            {memory > 0 ? `${memory}` : '0'}<span className="text-sm text-indigo-300 ml-1">MB</span>
+          </span>
+        </div>
       </div>
 
-      <div className="flex justify-between items-center space-x-6">
-        <span className="text-slate-300 text-sm">Points</span>
-        <span className="font-mono text-purple-400 font-bold">
+      <div className="flex flex-col text-right">
+        <span className="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Data Points</span>
+        <span className="text-2xl font-bold tracking-tight text-cyan-400">
           {dataRef.current.length.toLocaleString()}
         </span>
       </div>
+      
     </div>
   );
 }

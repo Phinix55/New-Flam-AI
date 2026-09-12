@@ -1,30 +1,32 @@
 'use client';
 
 import React, { useTransition, useState } from 'react';
+import { useData } from '../providers/DataProvider';
 
 export function FilterPanel() {
   const [isPending, startTransition] = useTransition();
   const [filterText, setFilterText] = useState('');
+  const { setFilter } = useData();
 
   const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const text = e.target.value;
     // We use transition so typing doesn't block the UI while filter is applied
     startTransition(() => {
       setFilterText(text);
-      // In a real implementation, this would trigger a filter across the DataProvider's worker
+      setFilter(text);
     });
   };
 
   return (
-    <div className="bg-slate-800 p-4 rounded-lg border border-slate-700 shadow-sm flex items-center space-x-4">
-      <div className="text-slate-200 font-medium text-sm">Filters:</div>
+    <div className="flex items-center space-x-3">
+      <div className="text-slate-500 font-medium text-sm">Filters:</div>
       <input
         type="text"
         placeholder="Filter by category..."
         onChange={handleFilterChange}
-        className="bg-slate-900 border border-slate-600 rounded px-3 py-1 text-sm text-slate-200 outline-none focus:border-blue-500 transition-colors"
+        className="bg-slate-50 border border-slate-200 rounded-md px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 transition-all placeholder-slate-400 w-48"
       />
-      {isPending && <span className="text-xs text-blue-400">Updating...</span>}
+      {isPending && <span className="text-xs text-indigo-400 font-medium">Updating...</span>}
     </div>
   );
 }

@@ -10,7 +10,8 @@ export function ScatterPlot({ width = 800, height = 400 }) {
     ctx: CanvasRenderingContext2D,
     data: DataPoint[],
     w: number,
-    h: number
+    h: number,
+    transform: { scale: number; panX: number }
   ) => {
     if (data.length === 0) return;
 
@@ -18,28 +19,29 @@ export function ScatterPlot({ width = 800, height = 400 }) {
     const maxTime = data[data.length - 1].timestamp;
     const minVal = 0;
     const maxVal = 100;
-
-    // Use lighter colors with opacity for scatter to show density
-    ctx.fillStyle = 'rgba(239, 68, 68, 0.4)'; // red-500 with opacity
+    // Use vibrant pastel orange/yellow with higher opacity for better visibility
+    ctx.fillStyle = 'rgba(250, 204, 21, 0.85)'; // yellow-400 with high opacity
 
     // Level of Detail (LOD): Downsample when there are too many points
-    const step = Math.max(1, Math.floor(data.length / (w * 1.5)));
+    const step = Math.max(1, Math.floor(data.length / (w * 1.5 * transform.scale)));
 
     for (let i = 0; i < data.length; i += step) {
       const pt = data[i];
-      const x = scaleX(pt.timestamp, minTime, maxTime, w);
+      const x = (scaleX(pt.timestamp, minTime, maxTime, w) * transform.scale) + transform.panX;
+      
+      if (x < -10 || x > w + 10) continue; // Skip offscreen points
+
       const y = scaleY(pt.value, minVal, maxVal, h);
 
-      // fillRect is significantly faster than arc() in Canvas2D
-      ctx.fillRect(x - 1, y - 1, 2, 2);
+      // fillRect is significantly faster than arc() in Canvas2D. Increased size to 4x4.
+      ctx.fillRect(x - 2, y - 2, 4, 4);
     }
   }, []);
 
   const canvasRef = useChartRenderer(drawScatter, width, height);
 
   return (
-    <div className="relative border border-slate-700 rounded-lg overflow-hidden bg-slate-900 shadow-xl">
-      <div className="absolute top-4 left-4 text-slate-300 font-semibold text-sm z-10">Scatter Plot Density</div>
+    <div className="relative border border-slate-100 rounded-2xl overflow-hidden bg-white h-full shadow-sm">
       <canvas ref={canvasRef} className="block w-full h-full" />
     </div>
   );

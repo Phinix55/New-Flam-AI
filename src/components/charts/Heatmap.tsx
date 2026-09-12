@@ -1,65 +1,82 @@
 'use client';
 
-import React, { useCallback, useRef, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { useChartRenderer } from '../../hooks/useChartRenderer';
 import { DataPoint } from '../../lib/types';
 import { scaleX, scaleY } from '../../lib/canvasUtils';
 
 export function Heatmap({ width = 800, height = 400 }) {
-  // Pre-render a glowing brush ONCE to an offscreen canvas to massively improve FPS
-  const brushCanvasRef = useRef<HTMLCanvasElement | null>(null);
-
-  useEffect(() => {
-    const brushCanvas = document.createElement('canvas');
-    brushCanvas.width = 30;
-    brushCanvas.height = 30;
-    const bCtx = brushCanvas.getContext('2d');
-    if (bCtx) {
-      const radgrad = bCtx.createRadialGradient(15, 15, 0, 15, 15, 15);
-      radgrad.addColorStop(0, 'rgba(245, 158, 11, 0.2)'); // amber-500
-      radgrad.addColorStop(1, 'rgba(245, 158, 11, 0)');
-      bCtx.fillStyle = radgrad;
-      bCtx.fillRect(0, 0, 30, 30);
-    }
-    brushCanvasRef.current = brushCanvas;
-  }, []);
-
   const drawHeatmap = useCallback((
     ctx: CanvasRenderingContext2D,
     data: DataPoint[],
     w: number,
-    h: number
+    h: number,
+    transform: { scale: number; panX: number }
   ) => {
-    if (data.length === 0 || !brushCanvasRef.current) return;
+    if (data.length === 0) return;
 
     const minTime = data[0].timestamp;
     const maxTime = data[data.length - 1].timestamp;
     const minVal = 0;
     const maxVal = 100;
 
-    ctx.globalCompositeOperation = 'screen';
-    
-    // Draw the pre-rendered brush image instead of creating a gradient per point
-    const brush = brushCanvasRef.current;
-    
-    // Level of Detail (LOD): Downsample density to preserve framerates
-    const step = Math.max(1, Math.floor(data.length / (w * 1.5)));
+    const cellSize = 12; // 10px box + 2px gap
+    const boxSize = 10;
+    const cols = Math.floor(w / cellSize);
+    const rows = Math.floor(h / cellSize);
 
-    for (let i = 0; i < data.length; i += step) {
+    // Flat array for buckets to keep memory allocation zero during frames (if reused, but recreating here is fast enough for 60fps at small sizes)
+    const buckets = new Int32Array(cols * rows);
+    let maxHits = 0;
+
+    // Fill buckets
+    for (let i = 0; i < data.length; i++) {
       const pt = data[i];
-      const x = scaleX(pt.timestamp, minTime, maxTime, w);
-      const y = scaleY(pt.value, minVal, maxVal, h);
-      ctx.drawImage(brush, x - 15, y - 15);
+      // Apply transform before mapping to grid
+      const xPos = (scaleX(pt.timestamp, minTime, maxTime, w) * transform.scale) + transform.panX;
+      const yPos = scaleY(pt.value, minVal, maxVal, h);
+      
+      const col = Math.floor(xPos / cellSize);
+      const row = Math.floor(yPos / cellSize);
+
+      if (col >= 0 && col < cols && row >= 0 && row < rows) {
+        const idx = row * cols + col;
+        buckets[idx]++;
+        if (buckets[idx] > maxHits) {
+           maxHits = buckets[idx];
+        }
+      }
     }
-    
-    ctx.globalCompositeOperation = 'source-over'; // reset
+
+    const xOffset = (w - (cols * cellSize)) / 2;
+    const yOffset = (h - (rows * cellSize)) / 2;
+
+    // Draw GitHub style boxes
+    for (let row = 0; row < rows; row++) {
+      for (let col = 0; col < cols; col++) {
+        const hits = buckets[row * cols + col];
+        
+        // GitHub Light Mode Colors
+        let color = '#ebedf0'; // Empty
+        if (hits > 0) {
+          const ratio = hits / maxHits;
+          if (ratio < 0.25) color = '#9be9a8';
+          else if (ratio < 0.5) color = '#40c463';
+          else if (ratio < 0.75) color = '#30a14e';
+          else color = '#216e39';
+        }
+        
+        ctx.fillStyle = color;
+        // +1 to center the gap padding
+        ctx.fillRect(xOffset + col * cellSize + 1, yOffset + row * cellSize + 1, boxSize, boxSize);
+      }
+    }
   }, []);
 
   const canvasRef = useChartRenderer(drawHeatmap, width, height);
 
   return (
-    <div className="relative border border-slate-700 rounded-lg overflow-hidden bg-slate-900 shadow-xl">
-      <div className="absolute top-4 left-4 text-slate-300 font-semibold text-sm z-10">Density Heatmap</div>
+    <div className="relative border border-slate-100 rounded-2xl overflow-hidden bg-white h-full shadow-sm">
       <canvas ref={canvasRef} className="block w-full h-full" />
     </div>
   );

@@ -8,16 +8,15 @@ export function TimeRangeSelector() {
   const [activeRange, setActiveRange] = useState('1min');
 
   return (
-    <div className="bg-slate-800 p-4 rounded-lg border border-slate-700 shadow-sm flex items-center space-x-2">
-      <div className="text-slate-200 font-medium text-sm mr-2">Range:</div>
+    <div className="flex items-center space-x-1 bg-slate-50 p-1 rounded-lg border border-slate-200">
       {RANGES.map((range) => (
         <button
           key={range}
           onClick={() => setActiveRange(range)}
-          className={`px-3 py-1 rounded text-sm transition-colors ${
+          className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
             activeRange === range
-              ? 'bg-blue-600 text-white shadow'
-              : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+              ? 'bg-white text-slate-900 shadow-sm border border-slate-200/60'
+              : 'bg-transparent text-slate-500 hover:text-slate-700'
           }`}
         >
           {range}

@@ -10,39 +10,44 @@ export function BarChart({ width = 800, height = 400 }) {
     ctx: CanvasRenderingContext2D,
     data: DataPoint[],
     w: number,
-    h: number
+    h: number,
+    transform: { scale: number; panX: number }
   ) => {
-    if (data.length === 0) return;
-
     // For bar chart, we might want to sample the data if there's too much
     // Or just draw thin bars. Let's draw the last 200 points.
-    const displayData = data.slice(-200);
-    if (displayData.length === 0) return;
+    const recentData = data.slice(-200);
+    if (recentData.length === 0) return;
 
-    const minTime = displayData[0].timestamp;
-    const maxTime = displayData[displayData.length - 1].timestamp;
+    const minTime = recentData[0].timestamp;
+    const maxTime = recentData[recentData.length - 1].timestamp;
     const minVal = 0;
     const maxVal = 100;
 
-    const barWidth = Math.max(1, (w / displayData.length) - 1);
+    // Pastel teal for bars
+    ctx.fillStyle = '#2dd4bf'; // teal-400
     
-    ctx.fillStyle = '#10b981'; // emerald-500
+    // Scale the bar width based on zoom, but keep a max limit
+    const baseWidth = Math.max(2, (w / recentData.length) - 1.5);
+    const barWidth = Math.min(100, baseWidth * transform.scale); 
 
-    for (let i = 0; i < displayData.length; i++) {
-      const pt = displayData[i];
-      const x = scaleX(pt.timestamp, minTime, maxTime, w);
+    for (let i = 0; i < recentData.length; i++) {
+      const pt = recentData[i];
+      const x = (scaleX(pt.timestamp, minTime, maxTime, w) * transform.scale) + transform.panX;
+      
+      // Skip offscreen bars
+      if (x + barWidth < 0 || x - barWidth / 2 > w) continue;
+
       const y = scaleY(pt.value, minVal, maxVal, h);
-      const barHeight = h - y;
 
-      ctx.fillRect(x - barWidth / 2, y, barWidth, barHeight);
+      // Draw bar from y to bottom
+      ctx.fillRect(x - barWidth / 2, y, barWidth, h - y);
     }
   }, []);
 
   const canvasRef = useChartRenderer(drawBar, width, height);
 
   return (
-    <div className="relative border border-slate-700 rounded-lg overflow-hidden bg-slate-900 shadow-xl">
-      <div className="absolute top-4 left-4 text-slate-300 font-semibold text-sm z-10">Recent Activity (Bar)</div>
+    <div className="relative border border-slate-100 rounded-2xl overflow-hidden bg-white h-full shadow-sm">
       <canvas ref={canvasRef} className="block w-full h-full" />
     </div>
   );

@@ -28,14 +28,14 @@ export function DataTable() {
   );
 
   return (
-    <div className="bg-slate-900 border border-slate-700 rounded-lg overflow-hidden flex flex-col shadow-xl mt-6">
-      <div className="bg-slate-800 px-4 py-3 border-b border-slate-700 flex justify-between items-center">
-        <h3 className="text-slate-200 font-semibold text-sm">Real-Time Data Feed</h3>
-        <span className="text-xs text-slate-400">Updates every 500ms</span>
+    <div className="bg-white flex flex-col h-full">
+      <div className="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-white">
+        <h3 className="text-slate-900 font-bold text-lg">Real-Time Data Feed</h3>
+        <span className="text-[10px] uppercase font-bold tracking-widest text-slate-400 bg-slate-50 px-2 py-1 rounded-md">Live Sync</span>
       </div>
-      
+
       {/* Table Header */}
-      <div className="grid grid-cols-3 px-4 py-2 bg-slate-800/50 border-b border-slate-700 text-xs font-semibold tracking-wider text-slate-400 uppercase">
+      <div className="grid grid-cols-3 px-6 py-3 border-b border-slate-100 text-[10px] font-bold tracking-widest text-slate-400 uppercase bg-slate-50/50">
         <div>Timestamp</div>
         <div>Category</div>
         <div className="text-right">Value</div>
@@ -56,7 +56,7 @@ export function DataTable() {
 
             return (
               <div
-                key={`${item.timestamp}-${index}`}
+                key={index}
                 style={{
                   position: 'absolute',
                   top: 0,
@@ -64,13 +64,16 @@ export function DataTable() {
                   height: ITEM_HEIGHT,
                   width: '100%',
                 }}
-                className="grid grid-cols-3 px-4 items-center text-sm border-b border-slate-800/50 text-slate-300 hover:bg-slate-800 transition-colors"
+                className="grid grid-cols-3 px-6 items-center text-sm border-b border-slate-50 text-slate-600 hover:bg-slate-50 transition-colors bg-white"
               >
                 <div className="font-mono text-xs text-slate-400">
-                  {new Date(item.timestamp).toISOString().split('T')[1].replace('Z', '')}
+                  {(() => {
+                    const d = new Date(item.timestamp);
+                    return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}:${d.getSeconds().toString().padStart(2, '0')}.${d.getMilliseconds().toString().padStart(3, '0')}`;
+                  })()}
                 </div>
-                <div>{item.category}</div>
-                <div className="text-right font-mono text-emerald-400">
+                <div className="font-medium text-slate-900">{item.category}</div>
+                <div className="text-right font-bold text-slate-900">
                   {item.value.toFixed(2)}
                 </div>
               </div>

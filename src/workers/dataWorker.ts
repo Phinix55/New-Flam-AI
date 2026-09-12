@@ -20,8 +20,18 @@ function generateBatch(size: number): DataPoint[] {
   return batch;
 }
 
+let currentFilter = '';
+
 self.onmessage = (e: MessageEvent) => {
   const { type, payload } = e.data;
+
+  if (type === 'SET_FILTER') {
+    currentFilter = (payload as string).toLowerCase();
+    const filteredData = currentFilter 
+      ? data.filter(pt => pt.category.toLowerCase().includes(currentFilter))
+      : data;
+    self.postMessage({ type: 'DATA_RESET', payload: filteredData });
+  }
 
   if (type === 'START') {
     if (intervalId) return;
@@ -40,7 +50,14 @@ self.onmessage = (e: MessageEvent) => {
         data = data.slice(data.length - MAX_DATA_POINTS);
       }
       
-      self.postMessage({ type: 'DATA_UPDATE', payload: newPoints });
+      // Only send points that match the filter to the main thread
+      const filteredPoints = currentFilter
+        ? newPoints.filter(pt => pt.category.toLowerCase().includes(currentFilter))
+        : newPoints;
+        
+      if (filteredPoints.length > 0) {
+        self.postMessage({ type: 'DATA_UPDATE', payload: filteredPoints });
+      }
     }, 100);
   }
 

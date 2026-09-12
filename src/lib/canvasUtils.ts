@@ -39,9 +39,9 @@ export const setupCanvas = (
   canvas.width = width * dpr;
   canvas.height = height * dpr;
 
-  // Scale the CSS size to match layout
-  canvas.style.width = `${width}px`;
-  canvas.style.height = `${height}px`;
+  // Allow CSS classes (w-full h-full) to dictate layout size
+  canvas.style.width = '100%';
+  canvas.style.height = '100%';
 
   // Normalize drawing coordinates to use CSS pixels
   ctx.scale(dpr, dpr);

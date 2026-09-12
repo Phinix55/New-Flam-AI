@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { useData } from '../providers/DataProvider';
 import { useVirtualization } from '../../hooks/useVirtualization';
 import { DataPoint } from '../../lib/types';
+import { FilterPanel } from '../controls/FilterPanel';
+import { TimeRangeSelector } from '../controls/TimeRangeSelector';
 
 export function DataTable() {
   const { dataRef } = useData();
@@ -12,15 +14,14 @@ export function DataTable() {
   // Throttle table updates to not kill React while Canvas renders at 60fps
   useEffect(() => {
     const interval = setInterval(() => {
-      // Just update the length to trigger a re-render. 
-      // Do not copy or reverse the 50k array, it causes massive GC pauses!
       setDataLength(dataRef.current.length);
     }, 500);
     return () => clearInterval(interval);
   }, [dataRef]);
 
   const ITEM_HEIGHT = 40;
-  const CONTAINER_HEIGHT = 400;
+  // Use a very large container height since we will rely on CSS flex for the actual visible area
+  const CONTAINER_HEIGHT = 1200; 
 
   const { containerRef, onScroll, totalHeight, virtualItems } = useVirtualization(
     dataLength,
@@ -28,10 +29,19 @@ export function DataTable() {
   );
 
   return (
-    <div className="bg-white flex flex-col h-full">
-      <div className="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-white">
-        <h3 className="text-slate-900 font-bold text-lg">Real-Time Data Feed</h3>
-        <span className="text-[10px] uppercase font-bold tracking-widest text-slate-400 bg-slate-50 px-2 py-1 rounded-md">Live Sync</span>
+    <div className="bg-white flex flex-col h-full w-full">
+      
+      {/* Controls Header */}
+      <div className="px-6 py-5 border-b border-slate-100 flex flex-col space-y-4 bg-white">
+        <div className="flex justify-between items-center">
+          <h3 className="text-slate-900 font-bold text-lg">Real-Time Data Feed</h3>
+          <span className="text-[10px] uppercase font-bold tracking-widest text-slate-400 bg-slate-50 px-2 py-1 rounded-md border border-slate-100">Live Sync</span>
+        </div>
+        
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center space-y-4 xl:space-y-0">
+          <FilterPanel />
+          <TimeRangeSelector />
+        </div>
       </div>
 
       {/* Table Header */}
@@ -45,12 +55,10 @@ export function DataTable() {
       <div
         ref={containerRef}
         onScroll={onScroll}
-        style={{ height: CONTAINER_HEIGHT, overflowY: 'auto' }}
-        className="relative"
+        className="relative flex-1 overflow-y-auto"
       >
         <div style={{ height: totalHeight, position: 'relative' }}>
           {virtualItems.map(({ index, offsetTop }) => {
-            // Read directly from the ref in reverse order (newest top)
             const item = dataRef.current[dataRef.current.length - 1 - index];
             if (!item) return null;
 

@@ -9,7 +9,7 @@ export function PerformanceMonitor() {
   const { dataRef } = useData();
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between w-full space-y-4 sm:space-y-0">
+    <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-8">
       
       <div className="flex items-center space-x-6">
         <div className="flex flex-col">
@@ -28,6 +28,8 @@ export function PerformanceMonitor() {
           </span>
         </div>
       </div>
+
+      <div className="w-px h-8 bg-slate-100 hidden sm:block" />
 
       <div className="flex flex-col text-right">
         <span className="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Data Points</span>

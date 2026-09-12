@@ -8,27 +8,36 @@ import { FilterPanel } from '../../components/controls/FilterPanel';
 import { TimeRangeSelector } from '../../components/controls/TimeRangeSelector';
 import { DataTable } from '../../components/ui/DataTable';
 import { PerformanceMonitor } from '../../components/ui/PerformanceMonitor';
+import { GuideModal } from '../../components/ui/GuideModal';
 
 export default function DashboardPage() {
   return (
     <DataProvider>
-      <div className="min-h-screen bg-[#F8F9FA] p-6 lg:p-10 flex flex-col space-y-8 font-sans">
+      <div className="min-h-screen bg-[#F8F9FA] font-sans flex flex-col relative">
       
       {/* Header Area */}
-      <header className="flex flex-col space-y-1">
-        <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
-          Performance-Critical Dashboard
-        </h1>
-        <p className="text-slate-500 text-sm font-medium">
-          Rendering 50,000+ points at 60 FPS using Canvas & Workers
-        </p>
+      <header className="sticky top-0 z-50 bg-[#F8F9FA] px-6 lg:px-10 pt-6 lg:pt-10 pb-4 border-b border-slate-200 flex flex-col sm:flex-row sm:justify-between sm:items-end space-y-4 sm:space-y-0">
+        <div className="flex flex-col space-y-1">
+          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
+            Performance-Critical Dashboard
+          </h1>
+          <p className="text-slate-500 text-sm font-medium">
+            Rendering 50,000+ points at 60 FPS using Canvas & Workers
+          </p>
+        </div>
+        <div className="flex items-center space-x-4">
+          <div className="bg-white px-4 py-2 rounded-xl shadow-sm border border-slate-100">
+            <PerformanceMonitor />
+          </div>
+          <GuideModal />
+        </div>
       </header>
 
       {/* Main 2-Column Layout */}
-      <div className="grid grid-cols-1 xl:grid-cols-[1.5fr_1fr] gap-8 items-start">
+      <div className="px-6 lg:px-10 py-8 grid grid-cols-1 xl:grid-cols-[1.5fr_1fr] gap-8">
         
-        {/* LEFT COLUMN: All Charts (Stacked Vertically) */}
-        <div className="flex flex-col space-y-12">
+        {/* LEFT COLUMN: All Charts (Native page scroll) */}
+        <div className="flex flex-col space-y-12 pb-20">
           
           {/* Chart 1: Line */}
           <div className="flex flex-col space-y-4">
@@ -68,24 +77,11 @@ export default function DashboardPage() {
 
         </div>
 
-        {/* RIGHT COLUMN: Controls & Data Table */}
-        <div className="flex flex-col space-y-6 sticky top-10">
-          
-          {/* Top Control Center Card */}
-          <div className="bg-white p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 flex flex-col space-y-6">
-            <PerformanceMonitor />
-            <div className="h-px w-full bg-slate-100" />
-            <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
-              <FilterPanel />
-              <TimeRangeSelector />
-            </div>
-          </div>
-
-          {/* Data Table */}
-          <div className="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 overflow-hidden">
+        {/* RIGHT COLUMN: Sticky Data Table */}
+        <div className="sticky top-[140px] h-[calc(100vh-180px)]">
+          <div className="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 overflow-hidden flex flex-col h-full">
             <DataTable />
           </div>
-
         </div>
       </div>
     </div>

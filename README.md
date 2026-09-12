@@ -1,6 +1,6 @@
 # 🚀 Flam: AI Performance Dashboard
 
-> A blazing-fast, real-time data visualization dashboard engineered to render **50,000+ data points at a rock-solid 60 FPS**, built specifically to test the absolute boundaries of modern web performance.
+> A blazing-fast, real-time data visualization dashboard engineered to render **50,000+ data points at a rock-solid 60 FPS**, built specifically to test the absolute boundaries of modern web performance. 
 
 ---
 

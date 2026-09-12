@@ -8,6 +8,12 @@
 
 Welcome to the **Flam Performance Dashboard**. This project demonstrates an enterprise-grade approach to handling massive, high-frequency data streams within a React/Next.js environment. By actively bypassing React's standard state rendering loop and embracing raw Canvas API power, this dashboard remains smooth, responsive, and entirely free of memory leaks even when bombarded with real-time data.
 
+> **🎉 Live Demo:** Check out the deployed application at [https://www.listx.in/](https://www.listx.in/) (click on "Get Demo") or access the dashboard directly at [https://www.listx.in/dashboard](https://www.listx.in/dashboard).
+
+*As a bonus to make the project feel like a native part of your product, I took the liberty of recreating your landing page for the index route! I really enjoyed matching your design system.*
+
+*However, all of my core engineering work for the assignment is located on the Dashboard route (`/dashboard`). The dashboard successfully streams 50,000 data points at a locked 60 FPS using Web Workers, Canvas, and React DOM Recycling.*
+
 ![Dashboard Preview](/assets/image.jpeg)
 
 ### ✨ Key Features

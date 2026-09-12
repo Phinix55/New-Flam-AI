@@ -48,20 +48,11 @@ export function LineChart({ width = 800, height = 400, color = '#3b82f6' }: Line
     let first = true;
     for (let i = 0; i < data.length; i += step) {
       const pt = data[i];
-      // Apply the zero-latency zoom & pan transformations directly to X coordinate
       const x = (scaleX(pt.timestamp, minTime, maxTime, w) * transform.scale) + transform.panX;
-      const y = scaleY(pt.value, minVal, maxVal, h);
 
-      // Only draw points that are visible in the current viewport
-      if (x < -10 || x > w + 10) {
-        if (first) {
-          ctx.moveTo(x, y);
-          first = false;
-        } else {
-          ctx.lineTo(x, y);
-        }
-        continue; // Skip drawing off-screen segments if possible, but keep paths connected
-      }
+      if (x < -10 || x > w + 10) continue; // Skip offscreen points
+
+      const y = scaleY(pt.value, minVal, maxVal, h);
 
       if (first) {
         ctx.moveTo(x, y);

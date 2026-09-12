@@ -21,42 +21,107 @@ function generateBatch(size: number): DataPoint[] {
 }
 
 let currentFilter = '';
+let currentTimeRange = 'All'; // Acts as aggregation mode now
+
+function getAggregationInterval() {
+  switch (currentTimeRange) {
+    case '1min': return 60 * 1000;
+    case '5min': return 5 * 60 * 1000;
+    case '1hour': return 60 * 60 * 1000;
+    default: return 0; // 'All' = None
+  }
+}
+
+function aggregateData(points: DataPoint[], intervalMs: number) {
+  if (intervalMs === 0 || points.length === 0) return points;
+
+  const result: DataPoint[] = [];
+  let currentBucketTime = Math.floor(points[0].timestamp / intervalMs) * intervalMs;
+  let categorySums: Record<string, { sum: number, count: number }> = {};
+  
+  for (let i = 0; i < points.length; i++) {
+    const pt = points[i];
+    const bucketTime = Math.floor(pt.timestamp / intervalMs) * intervalMs;
+    
+    if (bucketTime !== currentBucketTime) {
+      for (const cat in categorySums) {
+        result.push({
+          timestamp: currentBucketTime,
+          value: categorySums[cat].sum / categorySums[cat].count,
+          category: cat
+        });
+      }
+      currentBucketTime = bucketTime;
+      categorySums = {};
+    }
+    
+    if (!categorySums[pt.category]) {
+      categorySums[pt.category] = { sum: pt.value, count: 1 };
+    } else {
+      categorySums[pt.category].sum += pt.value;
+      categorySums[pt.category].count += 1;
+    }
+  }
+  
+  for (const cat in categorySums) {
+    result.push({
+      timestamp: currentBucketTime,
+      value: categorySums[cat].sum / categorySums[cat].count,
+      category: cat
+    });
+  }
+
+  return result;
+}
+
+function getFilteredAndAggregatedData() {
+  const filteredData = currentFilter 
+    ? data.filter(pt => pt.category.toLowerCase().includes(currentFilter))
+    : data;
+  return aggregateData(filteredData, getAggregationInterval());
+}
 
 self.onmessage = (e: MessageEvent) => {
   const { type, payload } = e.data;
 
   if (type === 'SET_FILTER') {
     currentFilter = (payload as string).toLowerCase();
-    const filteredData = currentFilter 
-      ? data.filter(pt => pt.category.toLowerCase().includes(currentFilter))
-      : data;
-    self.postMessage({ type: 'DATA_RESET', payload: filteredData });
+    self.postMessage({ type: 'DATA_RESET', payload: getFilteredAndAggregatedData() });
+  }
+
+  if (type === 'SET_TIME_RANGE') {
+    currentTimeRange = payload as string;
+    self.postMessage({ type: 'DATA_RESET', payload: getFilteredAndAggregatedData() });
   }
 
   if (type === 'START') {
     if (intervalId) return;
     
-    // Generate initial load
-    data = generateBatch(10000); // 10k initial
-    self.postMessage({ type: 'DATA_INIT', payload: data });
+    data = generateBatch(10000);
+    self.postMessage({ type: 'DATA_INIT', payload: getFilteredAndAggregatedData() });
 
-    // Generate real-time updates every 100ms
     intervalId = setInterval(() => {
       const newPoints = generateBatch(100);
       data = [...data, ...newPoints];
       
-      // Enforce sliding window to prevent memory leaks
       if (data.length > MAX_DATA_POINTS) {
         data = data.slice(data.length - MAX_DATA_POINTS);
       }
       
-      // Only send points that match the filter to the main thread
-      const filteredPoints = currentFilter
-        ? newPoints.filter(pt => pt.category.toLowerCase().includes(currentFilter))
-        : newPoints;
-        
-      if (filteredPoints.length > 0) {
-        self.postMessage({ type: 'DATA_UPDATE', payload: filteredPoints });
+      const intervalMs = getAggregationInterval();
+      
+      if (intervalMs > 0) {
+        // If aggregating, we must send a full reset payload because the current bucket is mutating
+        self.postMessage({ type: 'DATA_RESET', payload: getFilteredAndAggregatedData() });
+      } else {
+        // If not aggregating, just send the filtered delta update for extreme performance
+        const filteredPoints = currentFilter
+          ? newPoints.filter(pt => pt.category.toLowerCase().includes(currentFilter))
+          : newPoints;
+          
+        if (filteredPoints.length > 0) {
+          self.postMessage({ type: 'DATA_UPDATE', payload: filteredPoints });
+        }
       }
     }, 100);
   }

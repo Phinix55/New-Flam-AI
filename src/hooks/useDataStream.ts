@@ -68,10 +68,15 @@ export function useDataStream() {
     workerRef.current?.postMessage({ type: 'SET_FILTER', payload: text });
   };
 
+  const setTimeRange = (range: string) => {
+    workerRef.current?.postMessage({ type: 'SET_TIME_RANGE', payload: range });
+  };
+
   return {
     subscribe,
     dataRef,
     resetData,
     setFilter,
+    setTimeRange,
   };
 }

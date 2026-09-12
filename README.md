@@ -14,8 +14,8 @@ Welcome to the **Flam Performance Dashboard**. This project demonstrates an ente
 
 *However, all of my core engineering work for the assignment is located on the Dashboard route (`/dashboard`). The dashboard successfully streams 50,000 data points at a locked 60 FPS using Web Workers, Canvas, and React DOM Recycling.*
 
-![Dashboard Overview](/assets/dashboard-preview-1.png)
-![Dashboard Data View](/assets/dashboard-preview-2.png)
+![Dashboard Overview](https://github.com/Phinix55/New-Flam-AI/blob/main/public/assets/dashboard-preview-1.png?raw=true)
+![Dashboard Data View](https://github.com/Phinix55/New-Flam-AI/blob/main/public/assets/dashboard-preview-2.png?raw=true)
 
 ### ✨ Key Features
 

@@ -7,19 +7,12 @@ let intervalId: NodeJS.Timeout | null = null;
 
 const categories = ['Series A', 'Series B', 'Series C', 'Series D'];
 
-function formatTimestamp(timestamp: number): string {
-  const d = new Date(timestamp);
-  return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}:${d.getSeconds().toString().padStart(2, '0')}.${d.getMilliseconds().toString().padStart(3, '0')}`;
-}
-
 function generateBatch(size: number): DataPoint[] {
   const now = Date.now();
   const batch: DataPoint[] = [];
   for (let i = 0; i < size; i++) {
-    const timestamp = now - (size - i) * 10;
     batch.push({
-      timestamp, // slightly spread out timestamps
-      formattedTime: formatTimestamp(timestamp),
+      timestamp: now - (size - i) * 10, // slightly spread out timestamps
       value: Math.sin(now / 1000 + i) * 50 + 50 + (Math.random() * 10 - 5), // sine wave with noise
       category: categories[i % categories.length],
     });
@@ -54,7 +47,6 @@ function aggregateData(points: DataPoint[], intervalMs: number) {
       for (const cat in categorySums) {
         result.push({
           timestamp: currentBucketTime,
-          formattedTime: formatTimestamp(currentBucketTime),
           value: categorySums[cat].sum / categorySums[cat].count,
           category: cat
         });
@@ -74,7 +66,6 @@ function aggregateData(points: DataPoint[], intervalMs: number) {
   for (const cat in categorySums) {
     result.push({
       timestamp: currentBucketTime,
-      formattedTime: formatTimestamp(currentBucketTime),
       value: categorySums[cat].sum / categorySums[cat].count,
       category: cat
     });

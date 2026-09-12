@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useCallback } from 'react';
 
 interface VirtualizationOptions {
   itemHeight: number;
@@ -14,19 +14,16 @@ export function useVirtualization(
 ) {
   const [scrollTop, setScrollTop] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number | null>(null);
 
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    // Use a native, passive scroll listener to prevent blocking the main thread
-    // React 18 will automatically batch these setScrollTop calls synchronously to match the browser's paint cycle
-    const handleScroll = () => {
-      setScrollTop(container.scrollTop);
-    };
-
-    container.addEventListener('scroll', handleScroll, { passive: true });
-    return () => container.removeEventListener('scroll', handleScroll);
+  const onScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
+    const top = e.currentTarget.scrollTop;
+    if (rafRef.current === null) {
+      rafRef.current = requestAnimationFrame(() => {
+        setScrollTop(top);
+        rafRef.current = null;
+      });
+    }
   }, []);
 
   const totalHeight = itemCount * itemHeight;
@@ -48,6 +45,7 @@ export function useVirtualization(
 
   return {
     containerRef,
+    onScroll,
     totalHeight,
     virtualItems,
   };

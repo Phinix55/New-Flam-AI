@@ -112,7 +112,7 @@ export default function Navbar() {
           <Link href="#" className="text-[12px] uppercase tracking-widest text-white/70 hover:text-white transition-colors font-medium">
             CONTACT US
           </Link>
-          <Link href="#" className="bg-white text-black px-6 py-2.5 rounded-full text-[14px] font-medium hover:bg-white/90 transition-colors">
+          <Link href="/dashboard" className="bg-white text-black px-6 py-2.5 rounded-full text-[14px] font-medium hover:bg-white/90 transition-colors">
             Get Demo
           </Link>
         </div>
@@ -178,9 +178,9 @@ export default function Navbar() {
           
           {/* Bottom Button */}
           <div className="mt-8">
-             <button className="w-full bg-white text-black py-3.5 rounded-full text-[16px] font-medium" onClick={() => setIsMobileMenuOpen(false)}>
+             <Link href="/dashboard" className="w-full flex justify-center bg-white text-black py-3.5 rounded-full text-[16px] font-medium" onClick={() => setIsMobileMenuOpen(false)}>
                Get Demo
-             </button>
+             </Link>
           </div>
         </div>
       )}

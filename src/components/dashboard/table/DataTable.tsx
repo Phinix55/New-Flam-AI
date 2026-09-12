@@ -7,75 +7,6 @@ import { DataPoint } from '@/lib/types';
 import { FilterPanel } from '@/components/dashboard/controls/FilterPanel';
 import { TimeRangeSelector } from '@/components/dashboard/controls/TimeRangeSelector';
 
-const ITEM_HEIGHT = 40;
-const CONTAINER_HEIGHT = 1200;
-
-const TableRow = React.memo(({ item, offsetTop, itemHeight }: { item: DataPoint; offsetTop: number; itemHeight: number }) => {
-  // Use pre-formatted time from the Web Worker to prevent Garbage Collection stutters
-  const formattedTime = item.formattedTime || new Date(item.timestamp).toISOString();
-
-  return (
-    <div
-      style={{
-        position: 'absolute',
-        top: 0,
-        transform: `translateY(${offsetTop}px)`,
-        height: itemHeight,
-        width: '100%',
-      }}
-      // Completely removed CSS hover transitions. 
-      // Animating thousands of rows passing under a stationary mouse cursor 
-      // causes Style Recalculation thrashing on the GPU thread.
-      className="grid grid-cols-3 px-6 items-center text-sm border-b border-slate-50 text-slate-600 bg-white"
-    >
-      <div className="font-mono text-xs text-slate-400">
-        {formattedTime}
-      </div>
-      <div className="font-medium text-slate-900">{item.category}</div>
-      <div className="text-right font-bold text-slate-900">
-        {item.value.toFixed(2)}
-      </div>
-    </div>
-  );
-});
-
-TableRow.displayName = 'TableRow';
-
-// Isolated Virtual Body to prevent scroll state from re-rendering the entire Table + Filters
-function VirtualTableBody({ dataLength, dataRef }: { dataLength: number; dataRef: React.MutableRefObject<DataPoint[]> }) {
-  const { containerRef, totalHeight, virtualItems } = useVirtualization(
-    dataLength,
-    { itemHeight: ITEM_HEIGHT, containerHeight: CONTAINER_HEIGHT }
-  );
-
-  return (
-    <div
-      ref={containerRef}
-      // Relying on native passive listener inside useVirtualization instead of React synthetic events
-      className="relative flex-1 overflow-y-auto will-change-transform"
-    >
-      <div style={{ height: totalHeight, position: 'relative' }}>
-        {virtualItems.map(({ index, offsetTop }) => {
-          // Use dataLength instead of dataRef.current.length to ensure array access is stable
-          // relative to what useVirtualization calculated, preventing shifting bugs.
-          const item = dataRef.current[dataLength - 1 - index];
-          if (!item) return null;
-
-          return (
-            <TableRow 
-              // Using absolute index ensures React mathematically recycles nodes as the array shifts, completely avoiding duplicate key warnings
-              key={index} 
-              item={item} 
-              offsetTop={offsetTop} 
-              itemHeight={ITEM_HEIGHT} 
-            />
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
 export function DataTable() {
   const { dataRef } = useData();
   const [dataLength, setDataLength] = useState(0);
@@ -87,6 +18,15 @@ export function DataTable() {
     }, 500);
     return () => clearInterval(interval);
   }, [dataRef]);
+
+  const ITEM_HEIGHT = 40;
+  // Use a very large container height since we will rely on CSS flex for the actual visible area
+  const CONTAINER_HEIGHT = 1200; 
+
+  const { containerRef, onScroll, totalHeight, virtualItems } = useVirtualization(
+    dataLength,
+    { itemHeight: ITEM_HEIGHT, containerHeight: CONTAINER_HEIGHT }
+  );
 
   return (
     <div className="bg-white flex flex-col h-full w-full">
@@ -112,7 +52,43 @@ export function DataTable() {
       </div>
 
       {/* Virtualized Body */}
-      <VirtualTableBody dataLength={dataLength} dataRef={dataRef} />
+      <div
+        ref={containerRef}
+        onScroll={onScroll}
+        className="relative flex-1 overflow-y-auto"
+      >
+        <div style={{ height: totalHeight, position: 'relative' }}>
+          {virtualItems.map(({ index, offsetTop }) => {
+            const item = dataRef.current[dataRef.current.length - 1 - index];
+            if (!item) return null;
+
+            return (
+              <div
+                key={index}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  transform: `translateY(${offsetTop}px)`,
+                  height: ITEM_HEIGHT,
+                  width: '100%',
+                }}
+                className="grid grid-cols-3 px-6 items-center text-sm border-b border-slate-50 text-slate-600 hover:bg-slate-50 transition-colors bg-white"
+              >
+                <div className="font-mono text-xs text-slate-400">
+                  {(() => {
+                    const d = new Date(item.timestamp);
+                    return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}:${d.getSeconds().toString().padStart(2, '0')}.${d.getMilliseconds().toString().padStart(3, '0')}`;
+                  })()}
+                </div>
+                <div className="font-medium text-slate-900">{item.category}</div>
+                <div className="text-right font-bold text-slate-900">
+                  {item.value.toFixed(2)}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }

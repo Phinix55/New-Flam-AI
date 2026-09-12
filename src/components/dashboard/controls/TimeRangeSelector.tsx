@@ -22,7 +22,7 @@ export function TimeRangeSelector() {
           <button
             key={range}
             onClick={() => handleRangeClick(range)}
-            className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
+            className={`px-2 sm:px-4 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-all ${
               activeRange === range
                 ? 'bg-white text-slate-900 shadow-sm border border-slate-200/60'
                 : 'bg-transparent text-slate-500 hover:text-slate-700'

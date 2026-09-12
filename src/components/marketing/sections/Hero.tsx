@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function Hero() {
   return (
@@ -30,9 +31,13 @@ export default function Hero() {
             Flam is AI-native content format with life-like immersive visuals and fluid interactions
           </p>
           
-          <button className="bg-[#1f1d1b]/80 hover:bg-[#1f1d1b] border border-white/20 backdrop-blur-md text-white px-8 md:px-10 py-3.5 md:py-4 rounded-full text-[18px] md:text-[14px] transition-all duration-300">
+          <Link href="/dashboard" className="bg-[#1f1d1b]/80 hover:bg-[#1f1d1b] border border-white/20 backdrop-blur-md text-white px-8 md:px-10 py-3.5 md:py-4 rounded-full text-[18px] md:text-[14px] transition-all duration-300">
             Get Demo
-          </button>
+          </Link>
+
+          <p className="mt-6 text-[12px] md:text-[14px] text-white/50 tracking-wide font-light max-w-lg">
+            * Discover the power of real-time insights with our 60 FPS performance dashboard.
+          </p>
         </div>
       </div>
     </section>

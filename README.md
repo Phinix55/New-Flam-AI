@@ -40,6 +40,30 @@ Welcome to the **Flam Performance Dashboard**. This project demonstrates an ente
 
 ---
 
+## 📁 Project Structure
+
+```text
+├── src/
+│   ├── app/                  # Next.js App Router root
+│   │   ├── dashboard/        # The high-performance dashboard route
+│   │   └── page.tsx          # Marketing landing page
+│   ├── components/           
+│   │   ├── dashboard/        # Dashboard-specific components
+│   │   │   ├── charts/       # Custom Canvas-based visualizers (Line, Bar, Scatter, Heatmap)
+│   │   │   ├── controls/     # Filter and Aggregation toggles (useTransition)
+│   │   │   └── table/        # Virtualized 50,000+ row data table
+│   │   ├── marketing/        # Landing page sections (Hero, Navbar)
+│   │   ├── providers/        # React Context providers (Data context)
+│   │   └── ui/               # Shared UI components (GuideModal)
+│   ├── hooks/                # Custom React hooks (`useChartRenderer`, `useVirtualization`)
+│   ├── lib/                  # Shared utilities (`canvasUtils.ts`, types)
+│   └── workers/              # Background Web Worker threads (`dataWorker.ts`)
+├── public/assets/            # Static assets and images
+└── tailwind.config.ts        # Tailwind design system configuration
+```
+
+---
+
 ## 🚀 Getting Started
 
 ### Prerequisites
